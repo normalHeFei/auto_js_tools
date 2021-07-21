@@ -7,13 +7,9 @@ const readingFlag = 'readingFlag', refreshFlag = 'refreshFlag';
 if (listPage) {
 
     var exeId = setInterval(function () {
-        let reading = localStorage.getItem(readingFlag), refresh = localStorage.getItem(refreshFlag);
-        if (!reading) {
-            if (!refresh) {
-                localStorage.setItem(refreshFlag, true);
-                window.location.reload();
-            } else {
-                //document.getElementsByClassName('item-wrapper')[15].children[1].getAttribute('class')
+        let reading = localStorage.getItem(readingFlag),
+            refresh = localStorage.getItem(refreshFlag),
+            watchCourse = function () {
                 let items = document.getElementsByClassName('item-wrapper');
                 for (var i = 0; i < items.length; i++) {
                     let clazz = items[i].children[1].getAttribute('class');
@@ -22,7 +18,18 @@ if (listPage) {
                         items[i].children[0].click();
                         break;
                     }
+                    //no video in this page
+                    //todo next page fun
                 }
+
+            };
+
+        if (!reading) {
+            if (!refresh) {
+                localStorage.setItem(refreshFlag, true);
+                window.location.reload();
+            } else {
+                watchCourse();
             }
         } else {
             console.info('course is reading now, waitting for play next video...')
@@ -35,11 +42,11 @@ if (coursePage) {
     (function () {
         localStorage.setItem(readingFlag, true);
         var ID = setInterval(function () {
-           
+
             //click alarm 
             document.getElementsByClassName('alarmClock-wrapper')[0].click();
             //click if stop
-            if(document.getElementsByClassName('vcp-controls-panel')[0].getAttribute('class').indexOf('show') !=-1){
+            if (document.getElementsByClassName('vcp-controls-panel')[0].getAttribute('class').indexOf('show') != -1) {
                 document.getElementsByClassName('vcp-bigplay')[0].click();
             }
             //click if need comment 
@@ -73,10 +80,3 @@ window.onbeforeunload = function (e) {
     localStorage.removeItem(readingFlag);
 };
 
-window.onload = function(e){
-     let video = document.getElementsByTagName('video');
-     if(video  && video[0]){
-        video[0].setAttribute('muted', true);
-        console.info('set video muted');
-     }
-}
