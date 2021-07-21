@@ -9,6 +9,14 @@ if (listPage) {
     var exeId = setInterval(function () {
         let reading = localStorage.getItem(readingFlag),
             refresh = localStorage.getItem(refreshFlag),
+            exitsNextPage = function () {
+                let pageNowEle = document.getElementsByClassName('ivu-page-item ivu-page-item-active'),
+                    pageNow = pageNowEle && pageNowEle[0].innerText,
+                    pageTotalEle = document.querySelector('.total-text'),
+                    pageTotal = pageTotalEle && pageTotalEle.textContent.split('/')[1].substring(0, 1);
+                return pageNowEle && pageTotalEle && pageNow < pageTotal;
+            },
+
             watchCourse = function () {
                 let items = document.getElementsByClassName('item-wrapper');
                 for (var i = 0; i < items.length; i++) {
@@ -16,12 +24,21 @@ if (listPage) {
                     if (items[i].children[0].getAttribute('class') == 'item-cover' && clazz.indexOf('pass') == -1) {
                         console.info('play next course');
                         items[i].children[0].click();
-                        break;
+                        return;
                     }
-                    //no video in this page
-                    //todo next page fun
                 }
-
+                if (!exitsNextPage()) {
+                    console.info('no more page video can watch. exit')
+                    return;
+                }
+                //watch next page
+                let nextPage = document.querySelector('.ivu-page-next');
+                nextPage && nextPage.click();
+                //wait for next page display
+                setTimeout(function () {
+                    console.info('watch next page video')
+                    watchCourse()
+                }, 3000);
             };
 
         if (!reading) {
